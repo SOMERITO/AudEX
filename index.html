@@ -5,18 +5,27 @@
 <script type="module">
 const LIB_URL='https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.8.1',MODEL_ID='onnx-community/whisper-base',RATE=16000,$=id=>document.getElementById(id);const input=$('audioFile'),drop=$('dropZone'),selected=$('selectedFile'),run=$('transcribeBtn'),status=$('status'),title=$('statusTitle'),msg=$('statusMessage'),bar=$('progressBar'),output=$('transcript');let file=null,pipe=null,pipePromise=null,backend='automático';function setStatus(t,m='',p=null,err=false){status.classList.add('show');title.textContent=t;title.classList.toggle('error',err);msg.textContent=m;bar.style.width=p===null?'8%':Math.max(0,Math.min(100,p))+'%'}function hideStatus(){status.classList.remove('show');bar.style.width='0%'}function bytes(n){return n<1048576?Math.round(n/1024)+' KB':(n/1048576).toFixed(1)+' MB'}function selectFile(f){if(!f)return;if(!f.type.startsWith('audio/')&&!/\.(wav|mp3|ogg|m4a|flac|webm)$/i.test(f.name)){setStatus('Formato no reconocido','Selecciona un audio compatible.',0,true);return}file=f;$('fileName').textContent=f.name;$('fileMeta').textContent=bytes(f.size);selected.classList.add('show');run.disabled=false;$('result').classList.remove('show');output.value='';hideStatus()}function clear(){file=null;input.value='';selected.classList.remove('show');run.disabled=true;$('result').classList.remove('show');output.value='';hideStatus()}input.addEventListener('change',e=>selectFile(e.target.files?.[0]));$('removeFile').addEventListener('click',clear);$('clearBtn').addEventListener('click',clear);drop.addEventListener('click',e=>{if(!e.target.closest('label'))input.click()});drop.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();input.click()}});for(const ev of ['dragenter','dragover'])drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.add('drag')});for(const ev of ['dragleave','drop'])drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.remove('drag')});drop.addEventListener('drop',e=>selectFile(e.dataTransfer?.files?.[0]));
 async function diagnose(){
- const btn=$('diagnoseBtn');btn.disabled=true;
- const box=$('diagnostics');box.classList.add('show');box.textContent='Comprobando conexión desde este navegador…';
+ const btn=$('diagnoseBtn'),box=$('diagnostics');btn.disabled=true;box.classList.add('show');box.textContent='Comprobando endpoints de Hugging Face y sus CDNs…';
+ const timeout=7000;
+ async function probeHost(host){
+  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),timeout);
+  try{await fetch('https://'+host+'/',{mode:'no-cors',cache:'no-store',signal:controller.signal});return 'Alcanzable por HTTPS (prueba no-CORS)'}
+  finally{clearTimeout(timer)}
+ }
  const checks=[
   ['Librería Transformers.js (jsDelivr)',async()=>{await import(LIB_URL);return 'Accesible';}],
   ['Configuración del modelo (Hugging Face)',async()=>{const r=await fetch('https://huggingface.co/onnx-community/whisper-base/resolve/main/config.json',{cache:'no-store'});if(!r.ok)throw Error('HTTP '+r.status);await r.json();return 'Accesible (HTTP '+r.status+')';}],
   ['Archivo del modelo ONNX (Hugging Face/Xet)',async()=>{const r=await fetch('https://huggingface.co/onnx-community/whisper-base/resolve/main/onnx/encoder_model_uint8.onnx',{method:'HEAD',cache:'no-store'});if(!r.ok)throw Error('HTTP '+r.status);return 'Accesible (HTTP '+r.status+')';}],
   ['Runtime WASM (jsDelivr)',async()=>{const u='https://cdn.jsdelivr.net/npm/onnxruntime-web@1.22.0-dev.20250409-89f8206ba4/dist/ort-wasm-simd-threaded.wasm';const r=await fetch(u,{method:'HEAD',cache:'no-store'});if(!r.ok)throw Error('HTTP '+r.status);return 'Accesible (HTTP '+r.status+')';}]
  ];
- const lines=[];
- for(const [name,fn] of checks){try{const result=await fn();lines.push('✅ '+name+': '+result)}catch(e){lines.push('❌ '+name+': '+(e?.message||String(e)))}box.textContent=lines.join('\n')}
- const failed=lines.filter(x=>x.startsWith('❌')).length;
- box.textContent+='\n\n'+(failed?'Hay '+failed+' prueba(s) con error. Copia este resultado y envíamelo para saber qué dominio o archivo bloquea la conexión.':'Todas las pruebas básicas pasaron. Vuelve a intentar la transcripción; si falla, envíame el detalle que aparezca.');
+ const hosts=['cas-server.xethub.hf.co','cas-server.xethub-eu.hf.co','transfer.xethub.hf.co','transfer.xethub-eu.hf.co','us.aws.cdn.hf.co','us.gcp.cdn.hf.co','cdn-lfs-us-1.hf.co','cdn-lfs-eu-1.hf.co'];
+ const results=await Promise.all(checks.map(async([name,fn])=>{try{return '✅ '+name+': '+await fn()}catch(e){return '❌ '+name+': '+(e?.name==='AbortError'?'Tiempo de espera agotado':e?.message||String(e))}}));
+ box.textContent=results.join('\n')+'\n\nComprobando servidores de archivos de Hugging Face (Xet/CDN)…';
+ const hostResults=await Promise.all(hosts.map(async host=>{try{return '✅ '+host+': '+await probeHost(host)}catch(e){return '❌ '+host+': '+(e?.name==='AbortError'?'Tiempo de espera agotado':e?.message||String(e))}}));
+ box.textContent=results.join('\n')+'\n\nSERVIDORES DE DESCARGA (prueba de conectividad HTTPS; no valida CORS):\n'+hostResults.join('\n');
+ const failedHub=results.some(x=>x.startsWith('❌')&&x.includes('Hugging Face'));
+ const failedHosts=hostResults.filter(x=>x.startsWith('❌')).length;
+ box.textContent+='\n\n'+(failedHub&&failedHosts?'El navegador no llega a parte de los servidores de Hugging Face. Puede ser un bloqueo del firewall, DNS, VPN, antivirus o red.':'Copia estos resultados completos y envíamelos. La prueba separa acceso a huggingface.co de los servidores CDN/Xet.');
  btn.disabled=false;
 }
 $('diagnoseBtn').addEventListener('click',diagnose);

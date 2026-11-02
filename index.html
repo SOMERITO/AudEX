@@ -1,89 +1,109 @@
 <!doctype html>
-<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#101827"><title>AudEX — Transcriptor de llamadas</title><style>
-:root{color-scheme:dark;--bg:#0b1220;--panel:#121d2d;--line:#26364d;--muted:#9aabc1;--text:#eef4fb;--accent:#70b7ff;--mint:#8de0c1;--danger:#ff9b9b}*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(900px 500px at 85% -10%,#203957 0%,transparent 60%),var(--bg);color:var(--text);font:15px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}main{width:min(920px,calc(100% - 32px));margin:42px auto 64px}header{margin-bottom:24px}.eyebrow{color:var(--mint);font-size:12px;font-weight:750;letter-spacing:.13em;text-transform:uppercase}h1{margin:8px 0 6px;font-size:clamp(28px,5vw,40px);line-height:1.12;letter-spacing:-.035em}.intro{margin:0;max-width:700px;color:var(--muted)}.panel{background:linear-gradient(180deg,rgba(23,36,56,.96),rgba(18,29,45,.98));border:1px solid var(--line);border-radius:20px;padding:22px;box-shadow:0 18px 55px #0003}.drop{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:210px;padding:26px;border:1.5px dashed #48617f;border-radius:16px;background:#08101d59;text-align:center;transition:.18s}.drop.drag{border-color:var(--mint);background:#49ae8e17;transform:scale(1.005)}.upload-icon{width:48px;height:48px;display:grid;place-items:center;border-radius:15px;background:#203650;color:var(--accent);font-size:24px;margin-bottom:12px}.drop strong{font-size:17px}.drop p{color:var(--muted);margin:5px 0 14px;font-size:13px}input[type=file]{display:none}button,.file-button{border:0;border-radius:11px;padding:11px 16px;font:inherit;font-weight:700;cursor:pointer;transition:filter .15s,transform .15s}button:hover,.file-button:hover{filter:brightness(1.08)}button:active,.file-button:active{transform:translateY(1px)}button:disabled{opacity:.45;cursor:not-allowed;filter:none}.primary,.file-button{background:var(--accent);color:#071321}.secondary{background:#253951;color:var(--text);border:1px solid #405571}.ghost{background:transparent;color:#c6d6e8;border:1px solid #405571}.selected{display:none;margin-top:15px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:#050c1647}.selected.show{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.file-name{font-weight:650;overflow-wrap:anywhere}.file-meta{color:var(--muted);font-size:12px;margin-top:2px}.actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:18px}.actions .primary{min-width:190px}.status{margin-top:17px;padding:13px 14px;border:1px solid var(--line);border-radius:12px;background:#050c164d;color:var(--muted);display:none}.status.show{display:block}.status strong{color:var(--text)}.progress-track{height:7px;margin-top:10px;background:#25364d;overflow:hidden;border-radius:99px}.progress-bar{height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,#65aaff,#85dfc1);transition:width .2s}.result{margin-top:20px;display:none}.result.show{display:block}.result-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:10px}h2{font-size:18px;margin:0}textarea{width:100%;min-height:310px;resize:vertical;padding:16px;border-radius:13px;border:1px solid #354963;color:var(--text);background:#0c1625;font:14px/1.65 ui-monospace,SFMono-Regular,Consolas,monospace;outline:none}textarea:focus{border-color:var(--accent)}.result-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:11px}.notice{margin-top:18px;padding:14px 16px;border-left:3px solid var(--mint);background:#57be9912;border-radius:0 10px 10px 0;color:#c2d5d1;font-size:13px}.privacy{margin-top:13px;color:var(--muted);font-size:12px}.privacy b{color:#dce8f5}.error{color:var(--danger)!important}.footer{margin-top:16px;color:#8193aa;font-size:12px;text-align:center}@media(max-width:600px){main{margin:24px auto 40px}.panel{padding:14px}.drop{min-height:190px}.actions .primary{width:100%}}
-</style></head><body><main><header><div class="eyebrow">AudEX · Herramienta local</div><h1>Transcriptor de llamadas</h1><p class="intro">Selecciona la grabación completa. AudEX prepara el audio automáticamente y genera una transcripción en español, sin convertir ni dividir archivos manualmente.</p></header><section class="panel"><div id="dropZone" class="drop" role="button" tabindex="0" aria-label="Seleccionar o soltar archivo de audio"><div class="upload-icon">♫</div><strong>Arrastra aquí tu grabación</strong><p>WAV, MP3, OGG, M4A, FLAC y WEBM, según los códecs del navegador.</p><label class="file-button" for="audioFile">Seleccionar audio</label><input id="audioFile" type="file" accept="audio/*,.wav,.mp3,.ogg,.m4a,.flac,.webm"></div><div id="selectedFile" class="selected"><div><div id="fileName" class="file-name"></div><div id="fileMeta" class="file-meta"></div></div><button id="removeFile" class="ghost" type="button">Quitar</button></div><div class="actions"><button id="transcribeBtn" class="primary" type="button" disabled>Transcribir grabación</button><button id="clearBtn" class="secondary" type="button">Limpiar</button></div><div style="flex-basis:100%"></div><button id="diagnoseBtn" class="ghost" type="button">Diagnosticar conexión</button><div id="diagnostics" class="status" style="white-space:pre-wrap"></div><div id="status" class="status" role="status" aria-live="polite"><strong id="statusTitle">Preparando…</strong><div id="statusMessage">Esto puede tardar unos minutos.</div><div class="progress-track"><div id="progressBar" class="progress-bar"></div></div></div><div id="result" class="result"><div class="result-head"><h2>Transcripción</h2><span id="wordCount" class="file-meta"></span></div><textarea id="transcript" spellcheck="false" placeholder="Aquí aparecerá el texto reconocido…"></textarea><div class="result-actions"><button id="copyBtn" class="primary" type="button">Copiar texto</button><button id="downloadBtn" class="secondary" type="button">Descargar TXT</button></div></div><div class="notice"><b>Primer uso:</b> se descargan la librería y el modelo Whisper. Puede tardar más la primera vez; el navegador suele conservar el modelo en caché.</div><div class="privacy"><b>Privacidad:</b> la inferencia se realiza en tu navegador; el audio no se envía a un servicio de transcripción. Sí se descargan la librería y los pesos del modelo desde internet. Revisa y anonimiza datos personales antes de compartir una transcripción.</div></section><div class="footer">Whisper multilingüe · Español · Procesamiento local en el navegador</div></main>
-<script type="module">
-const LIB_URL='https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.8.1',MODEL_ID='onnx-community/whisper-base',RATE=16000,$=id=>document.getElementById(id);const input=$('audioFile'),drop=$('dropZone'),selected=$('selectedFile'),run=$('transcribeBtn'),status=$('status'),title=$('statusTitle'),msg=$('statusMessage'),bar=$('progressBar'),output=$('transcript');let file=null,pipe=null,pipePromise=null,backend='automático';function setStatus(t,m='',p=null,err=false){status.classList.add('show');title.textContent=t;title.classList.toggle('error',err);msg.textContent=m;bar.style.width=p===null?'8%':Math.max(0,Math.min(100,p))+'%'}function hideStatus(){status.classList.remove('show');bar.style.width='0%'}function bytes(n){return n<1048576?Math.round(n/1024)+' KB':(n/1048576).toFixed(1)+' MB'}function selectFile(f){if(!f)return;if(!f.type.startsWith('audio/')&&!/\.(wav|mp3|ogg|m4a|flac|webm)$/i.test(f.name)){setStatus('Formato no reconocido','Selecciona un audio compatible.',0,true);return}file=f;$('fileName').textContent=f.name;$('fileMeta').textContent=bytes(f.size);selected.classList.add('show');run.disabled=false;$('result').classList.remove('show');output.value='';hideStatus()}function clear(){file=null;input.value='';selected.classList.remove('show');run.disabled=true;$('result').classList.remove('show');output.value='';hideStatus()}input.addEventListener('change',e=>selectFile(e.target.files?.[0]));$('removeFile').addEventListener('click',clear);$('clearBtn').addEventListener('click',clear);drop.addEventListener('click',e=>{if(!e.target.closest('label'))input.click()});drop.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();input.click()}});for(const ev of ['dragenter','dragover'])drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.add('drag')});for(const ev of ['dragleave','drop'])drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.remove('drag')});drop.addEventListener('drop',e=>selectFile(e.dataTransfer?.files?.[0]));
-async function diagnose(){
- const btn=$('diagnoseBtn'),box=$('diagnostics');btn.disabled=true;box.classList.add('show');box.textContent='Comprobando endpoints de Hugging Face y sus CDNs…';
- const timeout=7000;
- async function probeHost(host){
-  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),timeout);
-  try{await fetch('https://'+host+'/',{mode:'no-cors',cache:'no-store',signal:controller.signal});return 'Alcanzable por HTTPS (prueba no-CORS)'}
-  finally{clearTimeout(timer)}
- }
- const checks=[
-  ['Librería Transformers.js (jsDelivr)',async()=>{await import(LIB_URL);return 'Accesible';}],
-  ['Configuración del modelo (Hugging Face)',async()=>{const r=await fetch('https://huggingface.co/onnx-community/whisper-base/resolve/main/config.json',{cache:'no-store'});if(!r.ok)throw Error('HTTP '+r.status);await r.json();return 'Accesible (HTTP '+r.status+')';}],
-  ['Archivo del modelo ONNX (Hugging Face/Xet)',async()=>{const r=await fetch('https://huggingface.co/onnx-community/whisper-base/resolve/main/onnx/encoder_model_uint8.onnx',{method:'HEAD',cache:'no-store'});if(!r.ok)throw Error('HTTP '+r.status);return 'Accesible (HTTP '+r.status+')';}],
-  ['Runtime WASM (jsDelivr)',async()=>{const u='https://cdn.jsdelivr.net/npm/onnxruntime-web@1.22.0-dev.20250409-89f8206ba4/dist/ort-wasm-simd-threaded.wasm';const r=await fetch(u,{method:'HEAD',cache:'no-store'});if(!r.ok)throw Error('HTTP '+r.status);return 'Accesible (HTTP '+r.status+')';}]
- ];
- const hosts=['cas-server.xethub.hf.co','cas-server.xethub-eu.hf.co','transfer.xethub.hf.co','transfer.xethub-eu.hf.co','us.aws.cdn.hf.co','us.gcp.cdn.hf.co','cdn-lfs-us-1.hf.co','cdn-lfs-eu-1.hf.co'];
- const results=await Promise.all(checks.map(async([name,fn])=>{try{return '✅ '+name+': '+await fn()}catch(e){return '❌ '+name+': '+(e?.name==='AbortError'?'Tiempo de espera agotado':e?.message||String(e))}}));
- box.textContent=results.join('\n')+'\n\nComprobando servidores de archivos de Hugging Face (Xet/CDN)…';
- const hostResults=await Promise.all(hosts.map(async host=>{try{return '✅ '+host+': '+await probeHost(host)}catch(e){return '❌ '+host+': '+(e?.name==='AbortError'?'Tiempo de espera agotado':e?.message||String(e))}}));
- box.textContent=results.join('\n')+'\n\nSERVIDORES DE DESCARGA (prueba de conectividad HTTPS; no valida CORS):\n'+hostResults.join('\n');
- const failedHub=results.some(x=>x.startsWith('❌')&&x.includes('Hugging Face'));
- const failedHosts=hostResults.filter(x=>x.startsWith('❌')).length;
- box.textContent+='\n\n'+(failedHub&&failedHosts?'El navegador no llega a parte de los servidores de Hugging Face. Puede ser un bloqueo del firewall, DNS, VPN, antivirus o red.':'Copia estos resultados completos y envíamelos. La prueba separa acceso a huggingface.co de los servidores CDN/Xet.');
- btn.disabled=false;
-}
-$('diagnoseBtn').addEventListener('click',diagnose);
-async function loadPipe(){
- if(pipe)return pipe;
- if(pipePromise)return pipePromise;
- pipePromise=(async()=>{
-  setStatus('Cargando reconocedor…','Descargando librería y preparando el modelo Whisper.',3);
-  let stage='librería de transcripción';
-  const{pipeline,env}=await import(LIB_URL);
-  env.allowLocalModels=false;
-  env.allowRemoteModels=true;
-  env.useBrowserCache=true;
-  const progress_callback=e=>{
-   if(e?.status==='progress')setStatus('Descargando modelo…',e.file||'Descargando archivos de Whisper…',Number.isFinite(e.progress)?e.progress:null);
-   else if(e?.status==='done')setStatus('Preparando modelo…',e.file||'Validando archivos descargados.',94);
-   else if(e?.status==='initiate')setStatus('Conectando con el modelo…',e.file||'Abriendo un archivo de Whisper.',5);
-  };
-  if(navigator.gpu){
-   try{
-    stage='modelo WebGPU (encoder fp16 + decoder q4)';
-    const adapter=await navigator.gpu.requestAdapter();
-    if(adapter){
-     setStatus('Preparando aceleración gráfica…','Intentando usar WebGPU con archivos compatibles.',7);
-     pipe=await pipeline('automatic-speech-recognition',MODEL_ID,{
-      device:'webgpu',
-      dtype:{encoder_model:'fp16',decoder_model_merged:'q4'},
-      progress_callback
-     });
-     backend='GPU (WebGPU)';
-     return pipe;
-    }
-   }catch(error){
-    console.warn('WebGPU no disponible; se probará CPU/WASM.',error);
-    pipe=null;
-    setStatus('Activando modo compatible…','WebGPU no pudo iniciar; se probará CPU.',12);
-   }
+<html lang="es">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#101827">
+<title>AudEX — Transcriptor de llamadas</title>
+<style>
+:root{color-scheme:dark;--bg:#0b1220;--panel:#121d2d;--line:#26364d;--muted:#9aabc1;--text:#eef4fb;--accent:#70b7ff;--mint:#8de0c1;--danger:#ff9b9b}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(900px 500px at 85% -10%,#203957 0%,transparent 60%),var(--bg);color:var(--text);font:15px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+main{width:min(920px,calc(100% - 32px));margin:42px auto 64px}header{margin-bottom:24px}.eyebrow{color:var(--mint);font-size:12px;font-weight:750;letter-spacing:.13em;text-transform:uppercase}
+h1{margin:8px 0 6px;font-size:clamp(28px,5vw,40px);line-height:1.12;letter-spacing:-.035em}.intro{margin:0;max-width:720px;color:var(--muted)}
+.panel{background:linear-gradient(180deg,rgba(23,36,56,.96),rgba(18,29,45,.98));border:1px solid var(--line);border-radius:20px;padding:22px;box-shadow:0 18px 55px #0003}
+.drop{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:210px;padding:26px;border:1.5px dashed #48617f;border-radius:16px;background:#08101d59;text-align:center;transition:.18s}.drop.drag{border-color:var(--mint);background:#49ae8e17;transform:scale(1.005)}
+.upload-icon{width:48px;height:48px;display:grid;place-items:center;border-radius:15px;background:#203650;color:var(--accent);font-size:24px;margin-bottom:12px}.drop strong{font-size:17px}.drop p{color:var(--muted);margin:5px 0 14px;font-size:13px}
+input[type=file]{display:none}button,.file-button{border:0;border-radius:11px;padding:11px 16px;font:inherit;font-weight:700;cursor:pointer;transition:filter .15s,transform .15s}button:hover,.file-button:hover{filter:brightness(1.08)}button:active,.file-button:active{transform:translateY(1px)}button:disabled{opacity:.45;cursor:not-allowed;filter:none}
+.primary,.file-button{background:var(--accent);color:#071321}.secondary{background:#253951;color:var(--text);border:1px solid #405571}.ghost{background:transparent;color:#c6d6e8;border:1px solid #405571}
+.selected{display:none;margin-top:15px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:#050c1647}.selected.show{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.file-name{font-weight:650;overflow-wrap:anywhere}.file-meta{color:var(--muted);font-size:12px;margin-top:2px}
+.actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:18px}.actions .primary{min-width:190px}
+.status{margin-top:17px;padding:13px 14px;border:1px solid var(--line);border-radius:12px;background:#050c164d;color:var(--muted);display:none}.status.show{display:block}.status strong{color:var(--text)}.progress-track{height:7px;margin-top:10px;background:#25364d;overflow:hidden;border-radius:99px}.progress-bar{height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,#65aaff,#85dfc1);transition:width .25s}
+.progress-bar.indeterminate{width:35%;animation:move 1.5s ease-in-out infinite alternate}@keyframes move{from{margin-left:0}to{margin-left:65%}}
+.result{margin-top:20px;display:none}.result.show{display:block}.result-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:10px}h2{font-size:18px;margin:0}
+textarea{width:100%;min-height:310px;resize:vertical;padding:16px;border-radius:13px;border:1px solid #354963;color:var(--text);background:#0c1625;font:14px/1.65 ui-monospace,SFMono-Regular,Consolas,monospace;outline:none}textarea:focus{border-color:var(--accent)}
+.result-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:11px}.notice{margin-top:18px;padding:14px 16px;border-left:3px solid var(--mint);background:#57be9912;border-radius:0 10px 10px 0;color:#c2d5d1;font-size:13px}
+.privacy{margin-top:13px;color:var(--muted);font-size:12px}.privacy b{color:#dce8f5}.error{color:var(--danger)!important}.footer{margin-top:16px;color:#8193aa;font-size:12px;text-align:center}
+.hosted{display:none}.hosted.show{display:block}.steps{margin:14px 0 0;padding-left:20px;color:#cbd8e8}.steps li{margin:7px 0}.hosted-buttons{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}.link-button{display:inline-block;text-decoration:none;border-radius:11px;padding:11px 16px;font-weight:750;background:var(--accent);color:#071321}.subtle{color:var(--muted);font-size:13px}
+@media(max-width:600px){main{margin:24px auto 40px}.panel{padding:14px}.drop{min-height:190px}.actions .primary{width:100%}}
+</style>
+</head>
+<body><main>
+<header><div class="eyebrow">AudEX · Transcripción privada</div><h1>Transcriptor de llamadas</h1><p class="intro">Convierte tus grabaciones completas en texto, sin dividirlas ni convertirlas manualmente. AudEX procesa las llamadas en tu propia computadora.</p></header>
+
+<section id="hostedNotice" class="panel hosted">
+ <div class="eyebrow">Configuración necesaria · Windows</div>
+ <h2 style="font-size:22px;margin-top:8px">Ejecuta AudEX en tu computadora</h2>
+ <p class="intro">Esta dirección pública de GitHub Pages solo puede mostrar la interfaz. Para procesar archivos sin depender de los permisos CORS de Hugging Face, AudEX utiliza un pequeño servidor local de Python.</p>
+ <ol class="steps">
+  <li>Descarga el repositorio completo y descomprímelo en tu computadora.</li>
+  <li>Instala Python 3.11 o 3.12 si aún no lo tienes.</li>
+  <li>Haz doble clic en <b>Abrir_AudEX.bat</b>. El instalador preparará las dependencias y abrirá la aplicación.</li>
+  <li>La primera ejecución descargará Whisper Base. Luego podrás reutilizar el modelo.</li>
+ </ol>
+ <div class="hosted-buttons"><a class="link-button" href="https://github.com/SOMERITO/AudEX/archive/refs/heads/main.zip">Descargar AudEX (ZIP)</a><a class="link-button" style="background:#253951;color:#eef4fb;border:1px solid #405571" href="https://github.com/SOMERITO/AudEX">Ver código en GitHub</a></div>
+ <div class="notice"><b>Privacidad:</b> el audio se procesa en tu computadora y se envía únicamente al servidor local 127.0.0.1. El modelo se descarga de internet una sola vez. No se utiliza una API de transcripción.</div>
+</section>
+
+<section id="appPanel" class="panel">
+ <div id="dropZone" class="drop" role="button" tabindex="0" aria-label="Seleccionar o soltar archivo de audio">
+  <div class="upload-icon">♫</div><strong>Arrastra aquí tu grabación</strong><p>WAV, MP3, OGG, M4A, FLAC y WEBM.</p>
+  <label class="file-button" for="audioFile">Seleccionar audio</label><input id="audioFile" type="file" accept="audio/*,.wav,.mp3,.ogg,.m4a,.flac,.webm">
+ </div>
+ <div id="selectedFile" class="selected"><div><div id="fileName" class="file-name"></div><div id="fileMeta" class="file-meta"></div></div><button id="removeFile" class="ghost" type="button">Quitar</button></div>
+ <div class="actions"><button id="transcribeBtn" class="primary" type="button" disabled>Transcribir grabación</button><button id="clearBtn" class="secondary" type="button">Limpiar</button></div>
+ <div id="status" class="status" role="status" aria-live="polite"><strong id="statusTitle">Preparando…</strong><div id="statusMessage">Esto puede tardar unos minutos.</div><div class="progress-track"><div id="progressBar" class="progress-bar"></div></div></div>
+ <div id="result" class="result"><div class="result-head"><h2>Transcripción</h2><span id="wordCount" class="file-meta"></span></div><textarea id="transcript" spellcheck="false" placeholder="Aquí aparecerá el texto reconocido…"></textarea><div class="result-actions"><button id="copyBtn" class="primary" type="button">Copiar texto</button><button id="downloadBtn" class="secondary" type="button">Descargar TXT</button></div></div>
+ <div class="notice"><b>Primera ejecución:</b> se descargan las dependencias y el modelo Whisper Base. La descarga se realiza desde Python, no desde JavaScript en el navegador.</div>
+ <div class="privacy"><b>Privacidad:</b> el audio se procesa en tu equipo mediante el servidor local. El contenido de la llamada no se envía a servicios externos. Anonimiza los datos personales antes de compartir la transcripción.</div>
+</section>
+<div class="footer">AudEX · Whisper Base · Procesamiento local en Windows</div>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+const hostname=location.hostname;
+const isLocal=hostname==='127.0.0.1'||hostname==='localhost';
+if(!isLocal){$('hostedNotice').classList.add('show');$('appPanel').style.display='none'}
+let currentFile=null,currentJob=null,pollTimer=null;
+const input=$('audioFile'),drop=$('dropZone'),selected=$('selectedFile'),run=$('transcribeBtn'),status=$('status'),title=$('statusTitle'),msg=$('statusMessage'),bar=$('progressBar'),output=$('transcript');
+function setStatus(t,m='',p=null,error=false){status.classList.add('show');title.textContent=t;title.classList.toggle('error',error);msg.textContent=m;bar.classList.toggle('indeterminate',p===null);bar.style.width=p===null?'35%':Math.max(0,Math.min(100,p))+'%'}
+function clearStatus(){status.classList.remove('show');bar.classList.remove('indeterminate');bar.style.width='0%'}
+function formatBytes(n){return n<1048576?Math.round(n/1024)+' KB':(n/1048576).toFixed(1)+' MB'}
+function selectFile(f){if(!f)return;if(!f.type.startsWith('audio/')&&!/\.(wav|mp3|ogg|m4a|flac|webm|mp4|mpeg|mpga)$/i.test(f.name)){setStatus('Formato no reconocido','Selecciona un archivo de audio compatible.',0,true);return}currentFile=f;$('fileName').textContent=f.name;$('fileMeta').textContent=formatBytes(f.size);selected.classList.add('show');run.disabled=false;$('result').classList.remove('show');output.value='';clearStatus()}
+function clearAll(){currentFile=null;input.value='';selected.classList.remove('show');run.disabled=true;$('result').classList.remove('show');output.value='';clearStatus();if(pollTimer)clearTimeout(pollTimer)}
+input.addEventListener('change',e=>selectFile(e.target.files?.[0]));$('removeFile').addEventListener('click',clearAll);$('clearBtn').addEventListener('click',clearAll);
+drop.addEventListener('click',e=>{if(!e.target.closest('label'))input.click()});drop.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();input.click()}});
+for(const ev of ['dragenter','dragover'])drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.add('drag')});
+for(const ev of ['dragleave','drop'])drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.remove('drag')});
+drop.addEventListener('drop',e=>selectFile(e.dataTransfer?.files?.[0]));
+function countWords(t){return(t.trim().match(/\S+/g)||[]).length}
+async function checkServer(){try{const r=await fetch('/api/health');if(!r.ok)throw Error();return await r.json()}catch{return null}}
+async function pollJob(id){
+ try{
+  const r=await fetch('/api/jobs/'+encodeURIComponent(id));if(!r.ok)throw Error('No se pudo consultar el estado de la transcripción.');
+  const job=await r.json();
+  if(job.status==='queued'||job.status==='running'){
+   setStatus(job.message||'Transcribiendo…',job.detail||'Mantén esta ventana abierta.',job.progress??null);
+   pollTimer=setTimeout(()=>pollJob(id),1200);return;
   }
-  stage='modelo CPU/WASM (encoder uint8 + decoder uint8)';
-  setStatus('Preparando modo compatible…','Se usarán archivos uint8 disponibles para este modelo.',14);
-  pipe=await pipeline('automatic-speech-recognition',MODEL_ID,{
-   dtype:{encoder_model:'uint8',decoder_model_merged:'uint8'},
-   progress_callback
-  });
-  backend='CPU (WASM, uint8)';
-  return pipe;
- })();
- try{return await pipePromise}
- catch(error){
-  pipe=null;
-  const detail=error?.message||String(error);
-  if(/failed to fetch|networkerror|load failed/i.test(detail)){
-   throw new Error('No se pudo descargar la librería o los archivos del modelo. Comprueba tu conexión y que la red permita acceder a cdn.jsdelivr.net y huggingface.co. Detalle: '+detail);
+  if(job.status==='done'){
+   output.value=job.transcript||'';$('wordCount').textContent=countWords(output.value).toLocaleString('es-PE')+' palabras · idioma detectado: '+(job.language||'es');
+   $('result').classList.add('show');setStatus('Transcripción completada','Revisa nombres, cifras, siglas y términos técnicos antes de compartir.',100);run.disabled=!currentFile;return;
   }
-  throw new Error('Falló la carga del '+(navigator.gpu?'modelo WebGPU/CPU':'modelo CPU')+'. Detalle: '+detail);
- }
- finally{pipePromise=null}
+  throw Error(job.error||'La transcripción no pudo completarse.');
+ }catch(e){setStatus('No se pudo transcribir',e.message||String(e),0,true);run.disabled=!currentFile}
 }
-async function decode(f){const AC=window.AudioContext||window.webkitAudioContext;if(!AC)throw Error('Usa Chrome o Edge actualizado.');const ctx=new AC();try{const decoded=await ctx.decodeAudioData((await f.arrayBuffer()).slice(0)),offline=new OfflineAudioContext(1,Math.ceil(decoded.duration*RATE),RATE),source=offline.createBufferSource();source.buffer=decoded;source.connect(offline.destination);source.start(0);return(await offline.startRendering()).getChannelData(0)}finally{await ctx.close()}}
-function words(s){return(s.trim().match(/\S+/g)||[]).length}run.addEventListener('click',async()=>{if(!file)return;run.disabled=true;try{setStatus('Leyendo audio…','Decodificando grabación completa.',4);const audio=await decode(file),asr=await loadPipe(),block=30*RATE,overlap=2*RATE,total=Math.ceil(audio.length/block),parts=[];for(let i=0;i<total;i++){const start=Math.max(0,i*block-(i?overlap:0)),end=Math.min(audio.length,(i+1)*block+(i<total-1?overlap:0));setStatus('Transcribiendo…',`Bloque ${i+1} de ${total} · ${backend}`,100*i/total);const res=await asr(audio.slice(start,end),{return_timestamps:false,language:'spanish',task:'transcribe'});let t=(res.text||'').trim();if(i&&t){const a=t.split(/\s+/),b=(parts.at(-1)||'').split(/\s+/);let n=0;for(let k=Math.min(12,a.length,b.length);k>0;k--)if(b.slice(-k).join(' ').toLowerCase()===a.slice(0,k).join(' ').toLowerCase()){n=k;break}t=a.slice(n).join(' ')}parts.push(t)}const text=parts.filter(Boolean).join(' ').replace(/\s+([,.!?;:])/g,'$1').trim();output.value=text;$('wordCount').textContent=words(text).toLocaleString('es-PE')+' palabras · '+backend;$('result').classList.add('show');setStatus('Transcripción completada','Verifica nombres, cifras, siglas y palabras técnicas.',100)}catch(e){console.error(e);setStatus('No se pudo transcribir',e?.message||'Error inesperado.',0,true)}finally{run.disabled=!file}});$('copyBtn').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(output.value);setStatus('Texto copiado','Ya puedes pegar la transcripción aquí.',100)}catch{output.select();document.execCommand('copy');setStatus('Texto copiado','Ya puedes pegar la transcripción aquí.',100)}});$('downloadBtn').addEventListener('click',()=>{const url=URL.createObjectURL(new Blob([output.value],{type:'text/plain;charset=utf-8'})),a=document.createElement('a');a.href=url;a.download=(file?.name||'llamada').replace(/\.[^.]+$/,'')+'_transcripcion.txt';a.click();URL.revokeObjectURL(url)});
-</script></body></html>
+run.addEventListener('click',async()=>{
+ if(!currentFile)return;
+ run.disabled=true;setStatus('Enviando audio al servidor local…','El archivo permanece en tu computadora.',null);
+ try{
+  const form=new FormData();form.append('audio',currentFile,currentFile.name);
+  const r=await fetch('/api/transcribe',{method:'POST',body:form});
+  const data=await r.json().catch(()=>({}));
+  if(!r.ok)throw Error(data.error||'El servidor local rechazó el archivo.');
+  currentJob=data.job_id;setStatus('Audio recibido','Preparando Whisper Base. La primera ejecución descargará el modelo.',null);
+  pollJob(currentJob);
+ }catch(e){setStatus('No se pudo iniciar la transcripción',e.message||String(e),0,true);run.disabled=!currentFile}
+});
+$('copyBtn').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(output.value);setStatus('Texto copiado','Ya puedes pegar la transcripción aquí.',100)}catch{output.select();document.execCommand('copy');setStatus('Texto copiado','Ya puedes pegar la transcripción aquí.',100)}});
+$('downloadBtn').addEventListener('click',()=>{const url=URL.createObjectURL(new Blob([output.value],{type:'text/plain;charset=utf-8'})),a=document.createElement('a');a.href=url;a.download=(currentFile?.name||'llamada').replace(/\.[^.]+$/,'')+'_transcripcion.txt';a.click();URL.revokeObjectURL(url)});
+if(isLocal)checkServer().then(info=>{if(!info)setStatus('Servidor local no disponible','Cierra esta pestaña y ejecuta Abrir_AudEX.bat desde la carpeta del proyecto.',0,true);else if(info.model_loaded)setStatus('AudEX listo','Whisper Base ya está cargado en memoria.',100);});
+</script>
+</body></html>

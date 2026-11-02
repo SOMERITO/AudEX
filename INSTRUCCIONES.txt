@@ -1,21 +1,27 @@
-AUDEX — INSTRUCCIONES
+AUDEX — INICIO RÁPIDO (WINDOWS)
 
-1. Abre AudEX con Chrome o Edge actualizado.
-2. Selecciona la grabación completa (WAV, MP3, OGG, M4A, FLAC o WEBM).
-3. Pulsa “Transcribir grabación”.
-4. Espera a que se complete el proceso.
-5. Revisa nombres, cifras, siglas y términos técnicos.
-6. Copia el texto o descarga el TXT y compártelo para auditar la llamada.
+IMPORTANTE:
+La página pública de GitHub Pages solo muestra las instrucciones. Para transcribir llamadas, utiliza el servidor local de tu computadora.
 
-No necesitas convertir ni dividir manualmente la grabación: AudEX lo prepara y procesa por bloques internos.
+PRIMERA CONFIGURACIÓN:
+1. Descarga el ZIP: https://github.com/SOMERITO/AudEX/archive/refs/heads/main.zip
+2. Descomprímelo en una carpeta de tu computadora.
+3. Instala Python 3.11 o 3.12: https://www.python.org/downloads/windows/
+   Durante la instalación, activa “Add Python to PATH”.
+4. Abre la carpeta y haz doble clic en Abrir_AudEX.bat.
+5. Espera a que se instalen las dependencias y se descargue Whisper Base.
+6. AudEX se abrirá en http://127.0.0.1:8765.
 
-Primera ejecución:
-- Requiere internet para descargar Transformers.js y Whisper Base.
-- El audio se procesa localmente en el navegador y no se envía a un servicio de transcripción.
+USOS SIGUIENTES:
+Solo vuelve a ejecutar Abrir_AudEX.bat. El entorno y el modelo se conservan en la carpeta del proyecto.
 
-Privacidad:
-- Anonimiza datos personales de estudiantes antes de compartir la transcripción.
-- Confirma que la grabación y su procesamiento estén permitidos por las políticas de tu organización.
+TRANSCRIBIR:
+1. Selecciona el audio original completo (WAV, MP3, OGG, M4A, FLAC o WEBM).
+2. Pulsa “Transcribir grabación”.
+3. Espera a que el servidor local complete la tarea.
+4. Copia el texto o descarga el TXT.
 
-Limitación:
-- No separa automáticamente las voces del asesor y del estudiante.
+PRIVACIDAD:
+El audio se procesa en tu propia computadora mediante 127.0.0.1. No se envía a un servicio externo de transcripción. La primera descarga de dependencias y del modelo sí requiere internet. Verifica que el tratamiento de grabaciones esté autorizado por tu organización. Anonimiza los datos personales antes de compartir la transcripción.
+
+No cierres la ventana “AudEX - Servidor local” mientras trabajas.

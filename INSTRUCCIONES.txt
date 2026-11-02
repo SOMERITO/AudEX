@@ -1,0 +1,21 @@
+AUDEX — INSTRUCCIONES
+
+1. Abre AudEX con Chrome o Edge actualizado.
+2. Selecciona la grabación completa (WAV, MP3, OGG, M4A, FLAC o WEBM).
+3. Pulsa “Transcribir grabación”.
+4. Espera a que se complete el proceso.
+5. Revisa nombres, cifras, siglas y términos técnicos.
+6. Copia el texto o descarga el TXT y compártelo para auditar la llamada.
+
+No necesitas convertir ni dividir manualmente la grabación: AudEX lo prepara y procesa por bloques internos.
+
+Primera ejecución:
+- Requiere internet para descargar Transformers.js y Whisper Base.
+- El audio se procesa localmente en el navegador y no se envía a un servicio de transcripción.
+
+Privacidad:
+- Anonimiza datos personales de estudiantes antes de compartir la transcripción.
+- Confirma que la grabación y su procesamiento estén permitidos por las políticas de tu organización.
+
+Limitación:
+- No separa automáticamente las voces del asesor y del estudiante.

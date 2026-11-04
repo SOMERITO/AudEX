@@ -1,5 +1,5 @@
 const $ = (id) => document.getElementById(id);
-const ACCEPTED = /\\.(wav|mp3|ogg|opus|aac|m4a|flac|webm|mp4|mpeg|mpga)$/i;
+const ACCEPTED = /\.(wav|mp3|ogg|opus|aac|m4a|flac|webm|mp4|mpeg|mpga)$/i;
 const TARGET_RATE = 16000;
 
 const input = $("audioFiles");
@@ -43,7 +43,7 @@ function hideStatus() {
   $("statusPercent").textContent = "";
 }
 function countWords(text) {
-  return (String(text || "").trim().match(/\\S+/g) || []).length;
+  return (String(text || "").trim().match(/\S+/g) || []).length;
 }
 function renderQueue() {
   const pending = queue.filter((item) => item.status === "queued" || item.status === "error").length;
@@ -326,11 +326,11 @@ function secondsToSrt(seconds) {
 }
 function buildSrt(chunks) {
   return chunks.filter((chunk) => chunk && Array.isArray(chunk.timestamp) && chunk.timestamp.length === 2 && chunk.timestamp.every(Number.isFinite) && chunk.text?.trim())
-    .map((chunk, index) => (index + 1) + "\\n" + secondsToSrt(chunk.timestamp[0]) + " --> " + secondsToSrt(chunk.timestamp[1]) + "\\n" + chunk.text.trim())
-    .join("\\n\\n");
+    .map((chunk, index) => (index + 1) + "\n" + secondsToSrt(chunk.timestamp[0]) + " --> " + secondsToSrt(chunk.timestamp[1]) + "\n" + chunk.text.trim())
+    .join("\n\n");
 }
 function downloadText(content, filename, mime = "text/plain;charset=utf-8") {
-  const url = URL.createObjectURL(new Blob(["\\ufeff", content], { type: mime }));
+  const url = URL.createObjectURL(new Blob(["\ufeff", content], { type: mime }));
   const anchor = document.createElement("a");
   anchor.href = url;
   anchor.download = filename;
@@ -371,12 +371,12 @@ $("results").addEventListener("click", async (event) => {
   if (txtButton) {
     const item = queue.find((entry) => entry.id === Number(txtButton.dataset.txt));
     const textarea = $("results").querySelector('[data-transcript="' + item.id + '"]');
-    downloadText(textarea.value, item.file.name.replace(/\\.[^.]+$/, "") + "_transcripcion.txt");
+    downloadText(textarea.value, item.file.name.replace(/\.[^.]+$/, "") + "_transcripcion.txt");
   }
   if (srtButton) {
     const item = queue.find((entry) => entry.id === Number(srtButton.dataset.srt));
     const srt = buildSrt(item.chunks);
-    if (srt) downloadText(srt, item.file.name.replace(/\\.[^.]+$/, "") + "_subtitulos.srt");
+    if (srt) downloadText(srt, item.file.name.replace(/\.[^.]+$/, "") + "_subtitulos.srt");
   }
 });
 

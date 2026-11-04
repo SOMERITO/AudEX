@@ -33,4 +33,4 @@ Los archivos `server.py`, `Abrir_AudEX.bat` y `requirements-local.txt` pertenece
 
 ## Versionado
 
-La versión activa se muestra al pie de la página. El número está registrado en `VERSION.txt` y en los comentarios `AUDEX VERSION N` de los archivos de código. Cada cambio publicado debe incrementar el número y añadirse a `CHANGELOG.md`. Consulta allí el historial y la regla de actualización.
+La versión activa actual es la 2 y se muestra al pie de la página. El número está registrado en `VERSION.txt` y en los comentarios `AUDEX VERSION N` de los archivos de código. Cada cambio publicado debe incrementar el número y añadirse a `CHANGELOG.md`. Consulta allí el historial y la regla de actualización.

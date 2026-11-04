@@ -1,3 +1,5 @@
+// AUDEX VERSION 1 | 2026-11-04 | Motor de reconocimiento en navegador.
+const AUDEX_WORKER_VERSION = 1;
 const MODEL_ID = "onnx-community/whisper-base";
 
 const LIBRARY_SOURCES = [
@@ -190,7 +192,7 @@ self.addEventListener("message", async (event) => {
   try {
     if (type === "init") {
       await loadModel(taskId);
-      self.postMessage({ type: "model-ready", taskId, device: selectedDevice, source: loadedSource });
+      self.postMessage({ type: "model-ready", taskId, device: selectedDevice, source: loadedSource, version: AUDEX_WORKER_VERSION });
       return;
     }
 

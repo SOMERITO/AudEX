@@ -42,7 +42,7 @@ def add_local_web_cors(response):
     return response
 
 
-ALLOWED_EXTENSIONS = {".wav", ".mp3", ".ogg", ".m4a", ".flac", ".webm", ".mp4", ".mpeg", ".mpga"}
+ALLOWED_EXTENSIONS = {".wav", ".mp3", ".ogg", ".opus", ".aac", ".m4a", ".flac", ".webm", ".mp4", ".mpeg", ".mpga"}
 ALLOWED_ORIGINS = {
     f"http://{APP_HOST}:{APP_PORT}",
     f"http://localhost:{APP_PORT}",
@@ -163,7 +163,7 @@ def create_transcription():
     safe_name = secure_filename(uploaded.filename)
     extension = Path(safe_name).suffix.lower()
     if extension not in ALLOWED_EXTENSIONS:
-        return jsonify(error="Formato no admitido. Usa WAV, MP3, OGG, M4A, FLAC o WEBM."), 415
+        return jsonify(error="Formato no admitido. Usa WAV, MP3, OGG/OPUS, AAC, M4A, FLAC o WEBM."), 415
     job_id = uuid.uuid4().hex
     file_path = UPLOAD_DIR / f"{job_id}{extension}"
     try:

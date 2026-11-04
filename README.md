@@ -30,3 +30,7 @@ La página acepta WAV, MP3, OGG/OPUS, AAC, M4A, FLAC y WEBM. La lectura final de
 - Procesamiento de audios en cola, sin servidor propio.
 
 Los archivos `server.py`, `Abrir_AudEX.bat` y `requirements-local.txt` pertenecen al modo local anterior y ya no son necesarios para utilizar la página de GitHub Pages.
+
+## Versionado
+
+La versión activa se muestra al pie de la página. El número está registrado en `VERSION.txt` y en los comentarios `AUDEX VERSION N` de los archivos de código. Cada cambio publicado debe incrementar el número y añadirse a `CHANGELOG.md`. Consulta allí el historial y la regla de actualización.

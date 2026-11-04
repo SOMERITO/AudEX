@@ -19,3 +19,6 @@ El audio se procesa en el navegador de tu computadora y no se envía a un servid
 
 COMPATIBILIDAD:
 Usa una versión reciente de Chrome o Edge. La lectura de algunos formatos depende de los códecs disponibles en el navegador.
+
+VERSIÓN:
+La versión activa se muestra al pie de la página. Comprueba que coincida con VERSION.txt en el repositorio. Cada modificación publicada incrementa el número de versión y queda anotada en CHANGELOG.md.

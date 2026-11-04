@@ -1,5 +1,5 @@
-// AUDEX VERSION 1 | 2026-11-04 | Motor de reconocimiento en navegador.
-const AUDEX_WORKER_VERSION = 1;
+// AUDEX VERSION 2 | 2026-11-04 | Motor de reconocimiento en navegador.
+const AUDEX_WORKER_VERSION = 2;
 const MODEL_ID = "onnx-community/whisper-base";
 
 const LIBRARY_SOURCES = [
@@ -69,12 +69,24 @@ async function loadLibrary(taskId) {
       // Preserve the exact URL when a model/config/tokenizer fetch fails.
       const nativeFetch = env.fetch || globalThis.fetch.bind(globalThis);
       env.fetch = async (resource, init) => {
-        const requestedUrl = typeof resource === "string" ? resource :
+        const originalUrl = typeof resource === "string" ? resource :
           (resource && resource.url ? resource.url : String(resource));
+        let requestUrl = originalUrl;
         try {
-          return await nativeFetch(resource, init);
+          // Hugging Face's download endpoint returns a direct file response.
+          // This avoids the less reliable preview/resolve route in some browsers.
+          const parsedUrl = new URL(originalUrl);
+          if (parsedUrl.hostname === "huggingface.co" && parsedUrl.pathname.includes("/resolve/")) {
+            parsedUrl.searchParams.set("download", "true");
+            requestUrl = parsedUrl.toString();
+          }
+          const response = await nativeFetch(requestUrl, init);
+          if (!response.ok) {
+            throw new Error("El servidor respondió HTTP " + response.status + " " + response.statusText);
+          }
+          return response;
         } catch (error) {
-          throw new Error("No se pudo descargar: " + requestedUrl + ". " + errorText(error));
+          throw new Error("No se pudo descargar: " + requestUrl + ". " + errorText(error));
         }
       };
 
@@ -86,7 +98,7 @@ async function loadLibrary(taskId) {
 
       try {
         const modelProbe = await env.fetch(
-          "https://huggingface.co/onnx-community/whisper-base/resolve/main/config.json",
+          "https://huggingface.co/onnx-community/whisper-base/resolve/main/config.json?download=true",
           { method: "GET", cache: "no-store" }
         );
         if (!modelProbe.ok) {

@@ -25,7 +25,29 @@ MAX_UPLOAD_BYTES = 1024 * 1024 * 1024
 app = Flask(__name__)
 app.config["MAX_CONTENT_LENGTH"] = MAX_UPLOAD_BYTES
 
+@app.after_request
+def add_local_web_cors(response):
+    """Allow the AudEX GitHub Pages UI to call only this local server."""
+    origin = request.headers.get("Origin")
+    if request.path.startswith("/api/") and origin in ALLOWED_ORIGINS:
+        response.headers["Access-Control-Allow-Origin"] = origin
+        response.headers["Vary"] = "Origin"
+        response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
+        requested_headers = request.headers.get("Access-Control-Request-Headers")
+        response.headers["Access-Control-Allow-Headers"] = requested_headers or "Content-Type"
+        # Chromium may send a Private Network Access preflight when a public
+        # HTTPS page contacts the loopback server.
+        response.headers["Access-Control-Allow-Private-Network"] = "true"
+        response.headers["Access-Control-Max-Age"] = "600"
+    return response
+
+
 ALLOWED_EXTENSIONS = {".wav", ".mp3", ".ogg", ".m4a", ".flac", ".webm", ".mp4", ".mpeg", ".mpga"}
+ALLOWED_ORIGINS = {
+    f"http://{APP_HOST}:{APP_PORT}",
+    f"http://localhost:{APP_PORT}",
+    "https://somerito.github.io",
+}
 MODEL: WhisperModel | None = None
 MODEL_LOCK = threading.Lock()
 JOBS: dict[str, dict[str, Any]] = {}
@@ -133,8 +155,7 @@ def health():
 @app.post("/api/transcribe")
 def create_transcription():
     origin = request.headers.get("Origin")
-    allowed_origins = {f"http://{APP_HOST}:{APP_PORT}", f"http://localhost:{APP_PORT}"}
-    if origin and origin not in allowed_origins:
+    if origin and origin not in ALLOWED_ORIGINS:
         return jsonify(error="Origen no permitido."), 403
     uploaded = request.files.get("audio")
     if uploaded is None or not uploaded.filename:

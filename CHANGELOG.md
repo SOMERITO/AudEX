@@ -21,3 +21,9 @@ Cada vez que se publique una modificación de código:
 6. Confirmar que el número visible en la página coincida con `VERSION.txt`.
 
 No se debe reutilizar un número de versión ya publicado.
+
+## Versión 2 — 04/11/2026
+
+- Se solicita cada archivo del modelo mediante el endpoint de descarga de Hugging Face (`download=true`) en lugar de la ruta de vista previa.
+- Se comprueba el código HTTP de las descargas y se conserva la URL efectiva en el mensaje de error.
+- Se incrementa la versión visible y se actualizan los identificadores de caché de la aplicación y del Worker.

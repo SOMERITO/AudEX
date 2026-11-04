@@ -166,7 +166,7 @@ document.addEventListener("drop", (event) => {
 
 function createWorker() {
   if (worker) return worker;
-  worker = new Worker(new URL("./transcriber.worker.js?v=browser-whisper-2", import.meta.url), { type: "module" });
+  worker = new Worker(new URL("./transcriber.worker.js?v=browser-whisper-3", import.meta.url), { type: "module" });
   worker.addEventListener("message", handleWorkerMessage);
   worker.addEventListener("error", (event) => {
     const location = event.filename ? " (" + event.filename + (event.lineno ? ":" + event.lineno : "") + ")" : "";

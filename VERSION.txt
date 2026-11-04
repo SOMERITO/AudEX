@@ -1,6 +1,7 @@
 AUDEX
-Versión: 1
-Fecha de publicación del identificador: 04/11/2026
+Versión: 2
+Fecha: 04/11/2026
 Rama: main
 Versión de la aplicación: navegador (Whisper Base)
+Cambio principal: descargas de Hugging Face con download=true y validación HTTP explícita.
 Regla: cada cambio de código publicado incrementa este número en 1.

@@ -1,27 +1,25 @@
 AUDEX — INICIO RÁPIDO (WINDOWS)
 
-IMPORTANTE:
-La página pública de GitHub Pages solo muestra las instrucciones. Para transcribir llamadas, utiliza el servidor local de tu computadora.
-
 PRIMERA CONFIGURACIÓN:
-1. Descarga el ZIP: https://github.com/SOMERITO/AudEX/archive/refs/heads/main.zip
-2. Descomprímelo en una carpeta de tu computadora.
-3. Instala Python 3.11 o 3.12: https://www.python.org/downloads/windows/
+1. Descarga el ZIP del repositorio y descomprímelo.
+2. Instala Python 3.11 o 3.12: https://www.python.org/downloads/windows/
    Durante la instalación, activa “Add Python to PATH”.
-4. Abre la carpeta y haz doble clic en Abrir_AudEX.bat.
-5. Espera a que se instalen las dependencias y se descargue Whisper Base.
-6. AudEX se abrirá en http://127.0.0.1:8765.
+3. Haz doble clic en Abrir_AudEX.bat.
+4. Espera a que se instalen las dependencias y se descargue Whisper Base.
+5. AudEX se abrirá en http://127.0.0.1:8765.
 
 USOS SIGUIENTES:
 Solo vuelve a ejecutar Abrir_AudEX.bat. El entorno y el modelo se conservan en la carpeta del proyecto.
 
-TRANSCRIBIR:
-1. Selecciona el audio original completo (WAV, MP3, OGG, M4A, FLAC o WEBM).
-2. Pulsa “Transcribir grabación”.
-3. Espera a que el servidor local complete la tarea.
-4. Copia el texto o descarga el TXT.
+TRANSCRIBIR VARIOS AUDIOS:
+1. Selecciona varios archivos a la vez o arrástralos a la página.
+2. Pulsa “Transcribir todos”.
+3. AudEX procesa los audios secuencialmente y muestra el estado de cada uno.
+4. Edita la transcripción si lo necesitas.
+5. Copia el texto o descarga cada resultado como TXT o subtítulos SRT.
+6. Si algún archivo falla, usa “Reintentar pendientes”; los archivos completados no se repiten.
 
 PRIVACIDAD:
-El audio se procesa en tu propia computadora mediante 127.0.0.1. No se envía a un servicio externo de transcripción. La primera descarga de dependencias y del modelo sí requiere internet. Verifica que el tratamiento de grabaciones esté autorizado por tu organización. Anonimiza los datos personales antes de compartir la transcripción.
+El audio se procesa en tu propia computadora mediante 127.0.0.1. No se envía a un servicio externo de transcripción. La primera descarga de dependencias y del modelo sí requiere internet. Verifica que el tratamiento de grabaciones esté autorizado por tu organización. Anonimiza los datos personales antes de compartir transcripciones.
 
 No cierres la ventana “AudEX - Servidor local” mientras trabajas.

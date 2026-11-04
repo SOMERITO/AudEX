@@ -1,4 +1,8 @@
+// AUDEX VERSION 1 | 2026-11-04 | Incrementar el número en cada cambio publicado.
+const AUDEX_VERSION = 1;
 const $ = (id) => document.getElementById(id);
+const versionLabel = $("appVersion");
+if (versionLabel) versionLabel.textContent = "Versión " + AUDEX_VERSION;
 const ACCEPTED = /\.(wav|mp3|ogg|opus|aac|m4a|flac|webm|mp4|mpeg|mpga)$/i;
 const TARGET_RATE = 16000;
 
@@ -166,7 +170,7 @@ document.addEventListener("drop", (event) => {
 
 function createWorker() {
   if (worker) return worker;
-  worker = new Worker(new URL("./transcriber.worker.js?v=browser-whisper-3", import.meta.url), { type: "module" });
+  worker = new Worker(new URL("./transcriber.worker.js?v=1", import.meta.url), { type: "module" });
   worker.addEventListener("message", handleWorkerMessage);
   worker.addEventListener("error", (event) => {
     const location = event.filename ? " (" + event.filename + (event.lineno ? ":" + event.lineno : "") + ")" : "";

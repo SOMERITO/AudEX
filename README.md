@@ -32,7 +32,7 @@ En los siguientes usos basta con ejecutar `Abrir_AudEX.bat`. El entorno y el mod
 
 ## Formatos
 
-WAV, MP3, OGG, M4A, FLAC, WEBM, MP4, MPEG y MPGA (según los códecs disponibles en el sistema).
+WAV, MP3, OGG/OPUS, AAC, M4A, FLAC, WEBM, MP4, MPEG y MPGA (según los códecs disponibles en el sistema).
 
 ## Cómo funciona
 

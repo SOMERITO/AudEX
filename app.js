@@ -166,10 +166,11 @@ document.addEventListener("drop", (event) => {
 
 function createWorker() {
   if (worker) return worker;
-  worker = new Worker(new URL("./transcriber.worker.js", import.meta.url), { type: "module" });
+  worker = new Worker(new URL("./transcriber.worker.js?v=browser-whisper-2", import.meta.url), { type: "module" });
   worker.addEventListener("message", handleWorkerMessage);
   worker.addEventListener("error", (event) => {
-    const message = event.message || "No se pudo iniciar el motor de transcripción.";
+    const location = event.filename ? " (" + event.filename + (event.lineno ? ":" + event.lineno : "") + ")" : "";
+    const message = (event.message || "El navegador no pudo cargar el módulo de transcripción.") + location;
     for (const request of activeRequests.values()) request.reject(new Error(message));
     activeRequests.clear();
   });
@@ -298,7 +299,11 @@ async function transcribeQueue() {
       renderResults();
     }
   } catch (error) {
-    setStatus("No se pudo iniciar el motor", error.message || String(error), 0, "error");
+    const detail = error.message || String(error);
+    const hint = /fetch|descargar|conexión|cdn|huggingface|unpkg|esm\\.sh/i.test(detail)
+      ? "El navegador no pudo descargar la biblioteca o el modelo. Comprueba la conexión y que tu red no bloquee los CDN o Hugging Face. El audio sigue en tu dispositivo."
+      : "No se ha enviado el audio. Puedes volver a intentarlo después de revisar el navegador.";
+    setStatus("No se pudo iniciar el motor", detail + " " + hint, 0, "error");
   } finally {
     busy = false;
     input.disabled = false;

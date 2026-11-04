@@ -1,26 +1,21 @@
-AUDEX — INICIO RÁPIDO (WINDOWS)
+AUDEX — USO DIRECTO DESDE LA PÁGINA WEB
 
-PRIMERA CONFIGURACIÓN:
-1. Descarga el ZIP del repositorio y descomprímelo.
-2. Instala Python 3.11 o 3.12: https://www.python.org/downloads/windows/
-   Durante la instalación, activa “Add Python to PATH”.
-3. Haz doble clic en Abrir_AudEX.bat y deja abierta la ventana “AudEX - Servidor local”.
-4. Abre la página de AudEX. También puedes utilizar la interfaz local http://127.0.0.1:8765.
-5. Si usas GitHub Pages, pulsa “Verificar servidor local” y permite el acceso a la red local cuando el navegador lo solicite.
+NO NECESITAS:
+- Descargar un ZIP.
+- Instalar Python.
+- Ejecutar Abrir_AudEX.bat.
+- Configurar una API o una cuenta externa.
 
-USOS SIGUIENTES:
-Solo vuelve a ejecutar Abrir_AudEX.bat. El entorno y el modelo se conservan en la carpeta del proyecto.
-
-TRANSCRIBIR VARIOS AUDIOS:
-1. Selecciona varios archivos a la vez o arrástralos a cualquier parte de la página.
-2. AudEX detectará los archivos de audio y los agregará a la lista.
-3. Pulsa “Transcribir todos”.
-4. AudEX procesa los audios secuencialmente y muestra el estado de cada uno.
-5. Edita la transcripción si lo necesitas.
-6. Copia el texto o descarga cada resultado como TXT o subtítulos SRT.
-7. Si algún archivo falla, usa “Reintentar pendientes”; los archivos completados no se repiten.
+CÓMO TRANSCRIBIR:
+1. Abre la página pública de AudEX.
+2. Arrastra uno o varios audios a cualquier parte de la página, o pulsa “Seleccionar audios”.
+3. Pulsa “Transcribir audios”.
+4. La primera vez se descargará Whisper Base y los componentes necesarios. Espera a que termine la preparación.
+5. AudEX procesa las grabaciones en tu navegador.
+6. Edita, copia o descarga cada transcripción en TXT. Cuando haya marcas de tiempo, también puedes descargar SRT.
 
 PRIVACIDAD:
-El audio se procesa en tu propia computadora mediante 127.0.0.1. No se envía a un servicio externo de transcripción. Si usas GitHub Pages, el navegador se conecta a tu servidor local y puede solicitar permiso de acceso a la red local. La primera descarga de dependencias y del modelo sí requiere internet. Verifica que el tratamiento de grabaciones esté autorizado por tu organización y anonimiza los datos personales antes de compartir transcripciones.
+El audio se procesa en el navegador de tu computadora y no se envía a un servidor de AudEX ni a una API de transcripción. La página descarga el modelo Whisper y la biblioteca de reconocimiento desde sus distribuidores. El navegador puede guardar el modelo en caché para los siguientes usos.
 
-No cierres la ventana “AudEX - Servidor local” mientras trabajas.
+COMPATIBILIDAD:
+Usa una versión reciente de Chrome o Edge. La lectura de algunos formatos depende de los códecs disponibles en el navegador.

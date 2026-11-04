@@ -30,7 +30,7 @@ input[type=file]{display:none}button,.file-button{border:0;border-radius:11px;pa
  <div class="notice"><b>Privacidad:</b> los audios se envían desde esta página únicamente a <code>127.0.0.1</code>, el servidor de tu propio equipo. No se cargan a una API externa. La descarga inicial del modelo sí requiere internet.</div>
 </section>
 <section id="appPanel" class="panel">
- <div id="dropZone" class="drop" role="button" tabindex="0" aria-label="Seleccionar o soltar archivos de audio"><div class="upload-icon">♫</div><strong>Arrastra aquí tus grabaciones</strong><p>Puedes soltarlas en esta zona o en cualquier parte de la página. También admite varios audios.</p><label class="file-button" for="audioFiles">Seleccionar audios</label><input id="audioFiles" type="file" accept="audio/*,.wav,.mp3,.ogg,.m4a,.flac,.webm,.mp4,.mpeg,.mpga" multiple></div>
+ <div id="dropZone" class="drop" role="button" tabindex="0" aria-label="Seleccionar o soltar archivos de audio"><div class="upload-icon">♫</div><strong>Arrastra aquí tus grabaciones</strong><p>Puedes soltarlas en esta zona o en cualquier parte de la página. También admite varios audios.</p><label class="file-button" for="audioFiles">Seleccionar audios</label><input id="audioFiles" type="file" accept="audio/*,.wav,.mp3,.ogg,.opus,.aac,.m4a,.flac,.webm,.mp4,.mpeg,.mpga" multiple></div>
  <div class="row toolbar"><div class="toolbar-left"><button id="startBtn" class="primary" disabled>Transcribir todos</button><button id="clearBtn" class="secondary">Vaciar lista</button><button id="checkServerBtn" class="secondary" type="button">Verificar servidor local</button><span id="queueCount" class="hint">0 archivos seleccionados</span></div><span id="serverState" class="hint">Comprobando servidor…</span></div>
  <div id="fileList" class="file-list"><div class="empty">Todavía no has agregado grabaciones.</div></div>
  <div id="status" class="status" role="status" aria-live="polite"><strong id="statusTitle">Preparando…</strong><div id="statusMessage"></div><div class="progress-track"><div id="progressBar" class="progress-bar"></div></div></div>
@@ -44,7 +44,7 @@ input[type=file]{display:none}button,.file-button{border:0;border-radius:11px;pa
 const $=id=>document.getElementById(id),isLocal=['127.0.0.1','localhost'].includes(location.hostname);
 const API_BASE=isLocal?'':'http://127.0.0.1:8765';
 if(!isLocal)$('hostedNotice').classList.add('show');
-const ACCEPTED=/\.(wav|mp3|ogg|m4a|flac|webm|mp4|mpeg|mpga)$/i;
+const ACCEPTED=/\.(wav|mp3|ogg|opus|aac|m4a|flac|webm|mp4|mpeg|mpga)$/i;
 let files=[],running=false,serverReady=false;
 const input=$('audioFiles'),drop=$('dropZone'),list=$('fileList'),start=$('startBtn'),status=$('status'),bar=$('progressBar');
 function bytes(n){return n<1048576?Math.round(n/1024)+' KB':(n/1048576).toFixed(1)+' MB'}

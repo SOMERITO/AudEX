@@ -4,8 +4,7 @@ const LIBRARY_SOURCES = [
   {
     name: "jsDelivr",
     url: "https://cdn.jsdelivr.net/npm/@huggingface/transformers@4.3.2",
-    wasmPaths: "https://cdn.jsdelivr.net/npm/@huggingface/transformers@4.3.2/dist/",
-  },
+      },
   {
     name: "unpkg",
     url: "https://unpkg.com/@huggingface/transformers@4.3.2?module",
@@ -58,10 +57,44 @@ async function loadLibrary(taskId) {
       env.useWasmCache = true;
       env.allowRemoteModels = true;
       env.allowLocalModels = false;
-      env.logLevel = 40;
+      env.logLevel = 30;
 
-      if (source.wasmPaths && env.backends?.onnx?.wasm) {
-        env.backends.onnx.wasm.wasmPaths = source.wasmPaths;
+      // Let Transformers.js select the matching ONNX Runtime/WASM files.
+      if (env.backends?.onnx?.wasm) {
+        env.backends.onnx.wasm.wasmPaths = undefined;
+      }
+
+      // Preserve the exact URL when a model/config/tokenizer fetch fails.
+      const nativeFetch = env.fetch || globalThis.fetch.bind(globalThis);
+      env.fetch = async (resource, init) => {
+        const requestedUrl = typeof resource === "string" ? resource :
+          (resource && resource.url ? resource.url : String(resource));
+        try {
+          return await nativeFetch(resource, init);
+        } catch (error) {
+          throw new Error("No se pudo descargar: " + requestedUrl + ". " + errorText(error));
+        }
+      };
+
+      self.postMessage({
+        type: "backend-note",
+        taskId,
+        note: "Biblioteca cargada desde " + source.name + ". Comprobando acceso al modelo…",
+      });
+
+      try {
+        const modelProbe = await env.fetch(
+          "https://huggingface.co/onnx-community/whisper-base/resolve/main/config.json",
+          { method: "GET", cache: "no-store" }
+        );
+        if (!modelProbe.ok) {
+          throw new Error("Hugging Face respondió HTTP " + modelProbe.status + " al consultar config.json.");
+        }
+      } catch (error) {
+        throw new Error(
+          "No se puede acceder al modelo en Hugging Face desde este navegador. " +
+          "Comprueba que tu conexión o extensiones no bloqueen huggingface.co. " + errorText(error)
+        );
       }
       return;
     } catch (error) {

@@ -352,6 +352,12 @@ function renderResults() {
       (srt ? "" : "disabled") + '>Descargar SRT</button></div></article>';
   }).join("");
 }
+$("results").addEventListener("input", (event) => {
+  const textarea = event.target.closest("[data-transcript]");
+  if (!textarea) return;
+  const item = queue.find((entry) => entry.id === Number(textarea.dataset.transcript));
+  if (item) item.transcript = textarea.value;
+});
 $("results").addEventListener("click", async (event) => {
   const copyButton = event.target.closest("[data-copy]");
   const txtButton = event.target.closest("[data-txt]");
